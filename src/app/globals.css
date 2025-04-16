@@ -30,7 +30,7 @@ body {
 }
 
 .correct-letter {
-  transition: color 0.1s;
+  /* transition: color 0.5s; */
   opacity: 1;
   color: white;
   /* border: 1px solid yellow; */
@@ -42,9 +42,13 @@ body {
   100% {opacity: 0;}
 }
 
+.blink-animation{
+  animation: blinking 1s ease 0s infinite normal none;
+}
+
 .caret-class {
   border: 1px solid white;
-  animation: blinking 1s ease 0s infinite normal none;
+  transition : left 125ms, top 125ms;
 }
 
 .incorrect-letter {
@@ -52,6 +56,5 @@ body {
 }
 
 .muted {
-  /* opacity: 0.7; */
   color:grey;
 }

@@ -1,26 +1,36 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ResultsType } from "../types/types"
+import {TypingTestProps } from "../types/types"
 
-type TypingTestProps = {
-  data: string;
-  handleFinish: ({ size, time }: ResultsType) => void;
-};
 const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
+
   const timerDiv = useRef<HTMLDivElement>(null);
+  const caretRef = useRef<HTMLSpanElement>(null);
   const timer = useRef(0);
-  const [ptr, setPtr] = useState(0);
   const indexRef = useRef(0);
   const typed = useRef(false);
   const intervalId = useRef<NodeJS.Timeout>(null);
   const nline = useRef(0);
+
+  const [ptr, setPtr] = useState(0);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     document.addEventListener("keydown", handleType);
+    const letterPos = document.getElementById(`${indexRef.current + ptr}`)?.getBoundingClientRect();
+    const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
+    if(letterPos && prePos){
+      const nx = letterPos.x - prePos.x
+      const ny = letterPos.y - prePos.y
+      console.log(nx , ny)
+      if(caretRef.current){
+        caretRef.current.style.left = `${String(Math.round(nx))}px`
+        caretRef.current.style.top = `${String(Math.round(ny))}px`
+      }
+    }
   }, []);
 
   const handleType = (e: KeyboardEvent) => {
-    e.preventDefault();
+    // e.preventDefault();
     if (!typed.current && e.key === data.charAt(0)) {
       typed.current = true;
       intervalId.current = setInterval(() => {
@@ -44,6 +54,20 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
 
       setIndex(indexRef.current);
 
+      const letterPos = document.getElementById(`${indexRef.current + ptr}`)?.getBoundingClientRect();
+      const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
+      if(letterPos && prePos){
+        const nx = letterPos.x - prePos.x
+        const ny = letterPos.y - prePos.y
+        console.log(nx , ny)
+        if(caretRef.current){
+          caretRef.current.style.left = `${String(Math.round(nx))}px`
+          caretRef.current.style.top = `${String(Math.round(ny))}px`
+        }
+      }
+      console.log(letterPos);
+      console.log(prePos);
+
       if (indexRef.current === data.length) {
         clearInterval(intervalId.current as NodeJS.Timeout);
         setIndex(0);
@@ -64,38 +88,23 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
   return (
     <div
       id="test"
-      className="flex-1 min-h-0 flex flex-col gap-y-4 border-blue-500"
+      className="flex-1 min-h-0 flex flex-col gap-y-4 border-blue-500 pl-4"
     >
       <div
         ref={timerDiv}
         id="timer"
-        className="text-4xl pl-4 text-yellow-400 border-red-600"
+        className="text-4xl text-yellow-400 border-red-600"
       >
         {timer.current}
       </div>
-      <pre className="text-[4vh] overflow-hidden border-purple-600">
+      <pre id="code-pre" className="text-[4vh] overflow-hidden border-purple-600 relative">
+        <span ref={caretRef} id="caret" className={("caret-class absolute h-[4vh] left-0 top-0") + (!typed.current ? " blink-animation" : "")}></span>
         {data
           .slice(ptr)
           .split("")
           .map((el, idx) => {
-            // return (
-            //   <span key={idx}>
-            //     {idx + ptr === indexRef.current && (
-            //       <span id="caret" className="caret-class"></span>
-            //     )}
-            //     <span
-            //       id={String(idx + ptr)}
-            //       className={
-            //         idx + ptr >= indexRef.current ? "muted" : "correct-letter"
-            //       }
-            //     >
-            //       {el}
-            //     </span>
-            //   </span>
-            // );
             return (
-              <span key={idx} id={String(idx+ptr)} className={idx + ptr >= indexRef.current ? "muted" : "correct-letter"}>
-                {idx + ptr == indexRef.current && <span id="caret" className="caret-class"></span>}
+              <span key={idx + ptr} id={String(idx+ptr)} className={(idx + ptr >= indexRef.current ? "muted" : "correct-letter")}>
                 {el}
               </span> 
             )

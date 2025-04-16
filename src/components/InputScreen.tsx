@@ -1,7 +1,5 @@
+import { InputScreenProps } from '@/types/types'
 import React, { useState } from 'react'
-type InputScreenProps = {
-    handleStart : (data : string) => void
-}
 const InputScreen = ({handleStart} : InputScreenProps) => {
     const [algoInput , setAlgoInput] = useState("")
 

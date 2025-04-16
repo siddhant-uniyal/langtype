@@ -1,10 +1,7 @@
+import { ResultsType } from '@/types/types'
 import React from 'react'
 
-type ResultProps = {
-    "size" : number,
-    "time" : number
-}
-const Result = ({size , time} : ResultProps) => {
+const Result = ({size , time} : ResultsType) => {
     console.log(size , time)
   return (
     <div>Result : {size} {time}</div>
