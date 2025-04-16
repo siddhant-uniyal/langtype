@@ -29,7 +29,7 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
     }
   }, []);
 
-  const handleType = (e: KeyboardEvent) => {
+  const handleType = async(e: KeyboardEvent) => {
     // e.preventDefault();
     if (!typed.current && e.key === data.charAt(0)) {
       typed.current = true;
@@ -45,17 +45,21 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
     if (key === data.charAt(indexRef.current)) {
       if (key == "\n") {
         ++nline.current;
-        if (nline.current % 10 === 0) {
-          setPtr(indexRef.current + 1);
+        if (nline.current % 2 === 0) {
+          await setPtr(indexRef.current + 1);
+          //  setPtr(indexRef.current + 1);
         }
         ++indexRef.current;
         while (data.charAt(indexRef.current) === " ") ++indexRef.current;
       } else ++indexRef.current;
 
-      setIndex(indexRef.current);
+      // await setIndex(indexRef.current);
+       setIndex(indexRef.current);
 
-      const letterPos = document.getElementById(`${indexRef.current + ptr}`)?.getBoundingClientRect();
+      console.log(indexRef.current)
+      const letterPos = document.getElementById(`${indexRef.current}`)?.getBoundingClientRect();
       const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
+      console.log(prePos);
       if(letterPos && prePos){
         const nx = letterPos.x - prePos.x
         const ny = letterPos.y - prePos.y
@@ -65,8 +69,7 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
           caretRef.current.style.top = `${String(Math.round(ny))}px`
         }
       }
-      console.log(letterPos);
-      console.log(prePos);
+      // console.log(letterPos);
 
       if (indexRef.current === data.length) {
         clearInterval(intervalId.current as NodeJS.Timeout);
