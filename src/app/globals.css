@@ -48,7 +48,7 @@ body {
 
 .caret-class {
   border: 1px solid white;
-  transition : left 125ms, top 125ms;
+  transition : transform 125ms;
 }
 
 .incorrect-letter {

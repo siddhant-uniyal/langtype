@@ -3,6 +3,17 @@ import {TypingTestProps } from "../types/types"
 import useTimer from "@/hooks/useTimer";
 import cn from "@/utils/cn";
 
+const positionCaret = (indexRef : React.RefObject<number> , caretRef : React.RefObject<HTMLSpanElement | null>) => {
+    const letterPos = document.getElementById(`${indexRef.current}`)?.getBoundingClientRect();
+    const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
+    if(letterPos && prePos){
+      const nx = letterPos.x - prePos.x
+      const ny = letterPos.y - prePos.y
+      if(caretRef.current){
+        caretRef.current.style.transform = `translate(${Math.round(nx)}px,${Math.round(ny)}px)`
+      }
+    }
+}
 const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
 
   const timerDiv = useRef<HTMLDivElement>(null);
@@ -20,33 +31,10 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
 
   useEffect(() => {
     document.addEventListener("keydown", handleType);
-    const letterPos = document.getElementById(`${indexRef.current + ptr}`)?.getBoundingClientRect();
-    const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
-    if(letterPos && prePos){
-      const nx = letterPos.x - prePos.x
-      const ny = letterPos.y - prePos.y
-      console.log(nx , ny)
-      if(caretRef.current){
-        caretRef.current.style.left = `${String(Math.round(nx))}px`
-        caretRef.current.style.top = `${String(Math.round(ny))}px`
-      }
-    }
   }, []);
 
   useEffect(() => {
-      console.log(indexRef.current)
-      const letterPos = document.getElementById(`${indexRef.current}`)?.getBoundingClientRect();
-      const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
-      console.log(prePos);
-      if(letterPos && prePos){
-        const nx = letterPos.x - prePos.x
-        const ny = letterPos.y - prePos.y
-        console.log(nx , ny)
-        if(caretRef.current){
-          caretRef.current.style.left = `${String(Math.round(nx))}px`
-          caretRef.current.style.top = `${String(Math.round(ny))}px`
-        }
-      }
+      positionCaret(indexRef , caretRef)
   } , [index])
 
   const handleType = async(e: KeyboardEvent) => {
@@ -55,7 +43,7 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
       typed.current = true;
       intervalId.current = setInterval(() => {
         incrementTime();
-        if (timerDiv && timerDiv.current) {
+        if(timerDiv && timerDiv.current) {
           timerDiv.current.textContent = String(getTime());
         }
       }, 1000);
@@ -94,7 +82,6 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
     <div id="test" className="flex-1 min-h-0 flex flex-col gap-y-4 border-blue-500 pl-4">
       <div ref={timerDiv} id="timer" className="text-4xl text-yellow-400 border-red-600">{getTime()}</div>
       <pre id="code-pre" className="text-[4vh] overflow-hidden border-purple-600 relative">
-        {/* <span ref={caretRef} id="caret" className={("caret-class absolute h-[4vh] left-0 top-0") + (!typed.current ? " blink-animation" : "")}></span> */}
         <span ref={caretRef} id="caret" className={cn("caret-class absolute h-[4vh] left-0 top-0", !typed.current && "blink-animation")}></span>
         {data.slice(ptr).split("").map((el, idx) => {
             return (
