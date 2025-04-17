@@ -29,6 +29,22 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
     }
   }, []);
 
+  useEffect(() => {
+      console.log(indexRef.current)
+      const letterPos = document.getElementById(`${indexRef.current}`)?.getBoundingClientRect();
+      const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
+      console.log(prePos);
+      if(letterPos && prePos){
+        const nx = letterPos.x - prePos.x
+        const ny = letterPos.y - prePos.y
+        console.log(nx , ny)
+        if(caretRef.current){
+          caretRef.current.style.left = `${String(Math.round(nx))}px`
+          caretRef.current.style.top = `${String(Math.round(ny))}px`
+        }
+      }
+  } , [index])
+
   const handleType = async(e: KeyboardEvent) => {
     // e.preventDefault();
     if (!typed.current && e.key === data.charAt(0)) {
@@ -45,8 +61,8 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
     if (key === data.charAt(indexRef.current)) {
       if (key == "\n") {
         ++nline.current;
-        if (nline.current % 2 === 0) {
-          await setPtr(indexRef.current + 1);
+        if (nline.current % 8 === 0) {
+          setPtr(indexRef.current + 1);
           //  setPtr(indexRef.current + 1);
         }
         ++indexRef.current;
@@ -56,19 +72,7 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
       // await setIndex(indexRef.current);
        setIndex(indexRef.current);
 
-      console.log(indexRef.current)
-      const letterPos = document.getElementById(`${indexRef.current}`)?.getBoundingClientRect();
-      const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
-      console.log(prePos);
-      if(letterPos && prePos){
-        const nx = letterPos.x - prePos.x
-        const ny = letterPos.y - prePos.y
-        console.log(nx , ny)
-        if(caretRef.current){
-          caretRef.current.style.left = `${String(Math.round(nx))}px`
-          caretRef.current.style.top = `${String(Math.round(ny))}px`
-        }
-      }
+
       // console.log(letterPos);
 
       if (indexRef.current === data.length) {
