@@ -23,7 +23,6 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
   const intervalId = useRef<NodeJS.Timeout>(null);
   const nline = useRef(0);
 
-
   const [ptr, setPtr] = useState(0);
   const [index, setIndex] = useState(0);
 
@@ -31,6 +30,9 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
 
   useEffect(() => {
     document.addEventListener("keydown", handleType);
+    return (() => {
+      document.removeEventListener("keydown" , handleType)
+    })
   }, []);
 
   useEffect(() => {
