@@ -14,7 +14,12 @@ const positionCaret = (indexRef : React.RefObject<number> , caretRef : React.Ref
       }
     }
 }
-const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
+
+const threshold = 8
+
+const TypingTest = ({ data , handleFinish }: TypingTestProps) => {
+
+  console.log(data)
 
   const timerDiv = useRef<HTMLDivElement>(null);
   const caretRef = useRef<HTMLSpanElement>(null);
@@ -25,7 +30,7 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
 
   const [ptr, setPtr] = useState(0);
   const [index, setIndex] = useState(0);
-
+  const [xdata , setData] = useState(data);
   const {timer , incrementTime , getTime , resetTime} = useTimer()
 
   useEffect(() => {
@@ -40,7 +45,9 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
   } , [index])
 
   const handleType = async(e: KeyboardEvent) => {
-    // e.preventDefault();
+    if(e.key === "/"){
+      e.preventDefault();
+    }
     if (!typed.current && e.key === data.charAt(0)) {
       typed.current = true;
       intervalId.current = setInterval(() => {
@@ -55,7 +62,7 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
     if (key === data.charAt(indexRef.current)) {
       if (key == "\n") {
         ++nline.current;
-        if (nline.current % 8 === 0) {
+        if (nline.current % threshold === 0) {
           setPtr(indexRef.current + 1);
         }
         ++indexRef.current;
@@ -75,6 +82,8 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
       }
     } else {
       const letter = document.getElementById(String(index))?.textContent;
+      setData(xdata.slice(0 , indexRef.current) + key + xdata.slice(indexRef.current))
+      ++indexRef.current
       console.log(letter);
       console.log("bad");
     }
@@ -85,7 +94,7 @@ const TypingTest = ({ data, handleFinish }: TypingTestProps) => {
       <div ref={timerDiv} id="timer" className="text-4xl text-yellow-400 border-red-600">{getTime()}</div>
       <pre id="code-pre" className="text-[4vh] overflow-hidden border-purple-600 relative">
         <span ref={caretRef} id="caret" className={cn("caret-class absolute h-[4vh] left-0 top-0", !typed.current && "blink-animation")}></span>
-        {data.slice(ptr).split("").map((el, idx) => {
+        {xdata.slice(ptr).split("").map((el, idx) => {
             return (
               <span key={idx + ptr} id={String(idx+ptr)} className={(idx + ptr >= indexRef.current ? "muted" : "correct-letter")}>
                 {el}

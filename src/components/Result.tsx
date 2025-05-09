@@ -4,7 +4,10 @@ import React from 'react'
 const Result = ({size , time} : ResultsType) => {
     console.log(size , time)
   return (
-    <div>Result : {size} {time}</div>
+    <div className='flex-1'>
+      <div>CPM : {Math.round(size/time)}</div>
+      <div>Time : {time}</div>
+    </div>
   )
 }
 
