@@ -19,9 +19,10 @@ const threshold = 8
 
 const TypingTest = ({ data , handleFinish }: TypingTestProps) => {
 
-  console.log(data)
+  // console.log(data)
 
   const timerDiv = useRef<HTMLDivElement>(null);
+  const typingDiv = useRef<HTMLDivElement>(null);
   const caretRef = useRef<HTMLSpanElement>(null);
   const indexRef = useRef(0);
   const typed = useRef(false);
@@ -34,20 +35,36 @@ const TypingTest = ({ data , handleFinish }: TypingTestProps) => {
   const {timer , incrementTime , getTime , resetTime} = useTimer()
 
   useEffect(() => {
-    document.addEventListener("keydown", handleType);
-    return (() => {
-      document.removeEventListener("keydown" , handleType)
-    })
+    typingDiv.current?.focus()
   }, []);
 
   useEffect(() => {
       positionCaret(indexRef , caretRef)
   } , [index])
 
-  const handleType = async(e: KeyboardEvent) => {
-    if(e.key === "/"){
-      e.preventDefault();
+  const handleType = async(e: React.KeyboardEvent<HTMLDivElement>) => {
+
+    if(e.key === "Tab" || e.key === "/"){
+      e.preventDefault()
+      if(e.key === "Tab"){
+        return
+      }
     }
+
+    if(e.key.length > 1 && !(e.key === "Backspace" || e.key === "Enter")){
+      return
+    }
+
+    if(e.key === "Backspace" && indexRef.current > 0){
+      console.log(indexRef.current)
+      console.log(xdata)
+      const ndata = xdata.slice(0 , indexRef.current - 1) + xdata.slice(indexRef.current)
+      console.log(ndata);
+      setData(ndata)
+      --indexRef.current 
+      setIndex(indexRef.current)
+    }
+
     if (!typed.current && e.key === data.charAt(0)) {
       typed.current = true;
       intervalId.current = setInterval(() => {
@@ -58,7 +75,8 @@ const TypingTest = ({ data , handleFinish }: TypingTestProps) => {
       }, 1000);
     }
     const key = e.key === "Enter" ? "\n" : e.key;
-    console.log(key);
+    // console.log(key);
+
     if (key === data.charAt(indexRef.current)) {
       if (key == "\n") {
         ++nline.current;
@@ -80,18 +98,18 @@ const TypingTest = ({ data , handleFinish }: TypingTestProps) => {
         }
         handleFinish({ size: data.length, time: getTime() });
       }
-    } else {
-      const letter = document.getElementById(String(index))?.textContent;
+    } else if(key.length === 1){
+      console.log("wrong key : " , e.key , "index : " , indexRef.current)
       setData(xdata.slice(0 , indexRef.current) + key + xdata.slice(indexRef.current))
       ++indexRef.current
-      console.log(letter);
-      console.log("bad");
+      setIndex(indexRef.current)
     }
   };
   
   return (
     <div id="test" className="flex-1 min-h-0 flex flex-col gap-y-4 border-blue-500 pl-4">
       <div ref={timerDiv} id="timer" className="text-4xl text-yellow-400 border-red-600">{getTime()}</div>
+      <div ref={typingDiv} tabIndex={0} onKeyDown={handleType}>
       <pre id="code-pre" className="text-[4vh] overflow-hidden border-purple-600 relative">
         <span ref={caretRef} id="caret" className={cn("caret-class absolute h-[4vh] left-0 top-0", !typed.current && "blink-animation")}></span>
         {xdata.slice(ptr).split("").map((el, idx) => {
@@ -102,6 +120,7 @@ const TypingTest = ({ data , handleFinish }: TypingTestProps) => {
             )
           })}
       </pre>
+      </div>
     </div>
   );
 };
