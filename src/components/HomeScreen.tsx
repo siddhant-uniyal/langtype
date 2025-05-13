@@ -29,7 +29,7 @@ const HomeScreen = () => {
       )}
 
       {stage === "typing" && (
-        <TypingTest data={testCode} handleFinish={handleFinish}></TypingTest>
+        <TypingTest ogText={testCode} handleFinish={handleFinish}></TypingTest>
       )}
 
       {stage === "result" && (

@@ -4,7 +4,7 @@ export type ResultsType = {
 }
 
 export type TypingTestProps = {
-  data: string;
+  ogText : string;
   handleFinish: ({ size, time }: ResultsType) => void;
 };
 

@@ -31,9 +31,10 @@ body {
 
 .correct-letter {
   /* transition: color 0.5s; */
-  opacity: 1;
-  color: white;
+  /* opacity: 1; */
+  /* color: white; */
   /* border: 1px solid yellow; */
+  border: 1px solid green;
 }
 
 @keyframes blinking{

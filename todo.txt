@@ -1,0 +1,6 @@
+red colour for wrong
+insertion of wrong 
+fix tomroxorrow
+too long string should autoscroll right
+wrong enter (new line) should be _ , right now its | becuase of border of incorrect letter
+fix caret positioning on zoom adjust
