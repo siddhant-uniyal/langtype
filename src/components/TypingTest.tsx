@@ -4,17 +4,16 @@ import useTimer from "@/hooks/useTimer";
 import cn from "@/utils/cn";
 
 const positionCaret = (index : number , caretRef : React.RefObject<HTMLSpanElement | null>) => {
-    const letterPos = document.getElementById(`${index}`)?.getBoundingClientRect();
-    const prePos = document.getElementById(`code-pre`)?.getBoundingClientRect();
-    if(letterPos && prePos){
-      const nx = letterPos.x - prePos.x
-      const ny = letterPos.y - prePos.y
+    const letterEl = document.getElementById(`${index}`)
+    const preEl = document.getElementById(`code-pre`)
+    if(letterEl && preEl){
+      const nx = letterEl.offsetLeft
+      const ny = letterEl.offsetTop
       if(caretRef.current){
         caretRef.current.style.transform = `translate(${Math.round(nx)}px,${Math.round(ny)}px)`
       }
     }
 }
-
 const threshold = 8
 
 const TypingTest = ({ ogText , handleFinish }: TypingTestProps) => {
@@ -33,6 +32,18 @@ const TypingTest = ({ ogText , handleFinish }: TypingTestProps) => {
   useEffect(() => {
     typingDiv.current?.focus()
   }, []);
+
+useEffect(() => {
+  const handleResize = () => {
+    positionCaret(index, caretRef);
+  };
+
+  window.addEventListener("resize", handleResize);
+
+  return () => {
+    window.removeEventListener("resize", handleResize);
+  };
+}, [index]); 
 
   useEffect(() => {
       positionCaret(index , caretRef)
@@ -102,7 +113,8 @@ const TypingTest = ({ ogText , handleFinish }: TypingTestProps) => {
   return (
     <div id="test" className="flex-1 min-h-0 flex flex-col gap-y-4 border-blue-500 pl-4">
       <div ref={timerDiv} id="timer" className="text-4xl text-yellow-400 border-red-600">{getTime()}</div>
-        <pre ref={typingDiv} tabIndex={0} onKeyDown={handleType} id="code-pre" className="text-[4vh] overflow-hidden border-purple-600 relative">
+        {/* <pre ref={typingDiv} tabIndex={0} onKeyDown={handleType} id="code-pre" className="text-[4vh] relative overflow-hidden overflow-x-scroll border-purple-600 "> */}
+        <pre ref={typingDiv} tabIndex={0} onKeyDown={handleType} id="code-pre" className="text-[4vh] relative overflow-hidden overflow-x-scroll overflow-y-scroll border-purple-600 ">
           <span ref={caretRef} id="caret" className={cn("caret-class absolute h-[4vh] left-0 top-0", (index === 0) && "blink-animation")}></span>
           {currText.slice(ptr).split("").map((el, idx) => {
               return (

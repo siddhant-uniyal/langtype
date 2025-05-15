@@ -1,6 +1,8 @@
-red colour for wrong
-insertion of wrong 
-fix tomroxorrow
 too long string should autoscroll right
 wrong enter (new line) should be _ , right now its | becuase of border of incorrect letter
 fix caret positioning on zoom adjust
+ctrl+shift+k : stops working, no input
+
+
+DOMRect { x: 16, y: 136, width: 878, height: 35.03334045410156, top: 136, right: 894, bottom: 171.03334045410156, left: 16 }
+
